@@ -570,7 +570,18 @@ ${e.message||e}`);
         <div className={`connection-status ${online?"online":"offline"}`} title={online?"Online":"Offline mode"}><span/> {online?"Online":"Offline"}{pendingSync>0&&<b> · {pendingSync} pending</b>}</div>
         <button className="menu" onClick={()=>setMobileOpen(true)}><Menu/></button>
         <div><h1>{page}</h1><p>LORD PHONES AND ACCESSORIES</p></div>
-        <div className="top-actions"><button><Bell size={19}/></button><div className="user"><ShieldCheck size={14}/>{profile?.full_name||session.user.email}<small>{role}</small></div></div>
+        <div className="top-actions">
+  <button><Bell size={19}/></button>
+  <div className="user">
+    <ShieldCheck size={14}/>
+    {profile?.full_name||session.user.email}
+    <small>{role}</small>
+  </div>
+  <button className="logout-btn" onClick={logout} title="Logout">
+    <LogOut size={18}/>
+    <span>Logout</span>
+  </button>
+</div>
       </header>
 
       {page==="Dashboard"&&<Dashboard products={products} phones={phones} role={role} onNavigate={navigate}/>}
