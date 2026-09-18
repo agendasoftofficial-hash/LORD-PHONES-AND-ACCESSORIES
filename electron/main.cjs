@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, dialog } = require('electron');
+﻿const { app, BrowserWindow, Menu, Tray, dialog } = require('electron');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 
@@ -11,14 +11,14 @@ function createWindow() {
     height: 900,
     minWidth: 1100,
     minHeight: 700,
-    icon: path.join(__dirname, '../public/g-lokoo-logo.png'),
+    icon: path.join(__dirname, '../public/lord-phones-logo.png'),
     webPreferences: {
       contextIsolation: true
     }
   });
 
   const url =
-    process.env.GLOKOO_POS_URL ||
+    process.env.LORD_PHONES_POS_URL ||
     'https://glokoophonesandaccessories.vercel.app';
 
   win.loadURL(url);
@@ -41,7 +41,7 @@ function setupAutoUpdater() {
   autoUpdater.autoInstallOnAppQuit = true;
 
   autoUpdater.on('checking-for-update', () => {
-    console.log('Checking for G-LOKOO POS updates...');
+    console.log('Checking for LORD PHONES AND ACCESSORIES POS updates...');
   });
 
   autoUpdater.on('update-available', (info) => {
@@ -49,7 +49,7 @@ function setupAutoUpdater() {
   });
 
   autoUpdater.on('update-not-available', () => {
-    console.log('G-LOKOO POS is up to date.');
+    console.log('LORD PHONES AND ACCESSORIES POS is up to date.');
   });
 
   autoUpdater.on('error', (error) => {
@@ -70,8 +70,8 @@ function setupAutoUpdater() {
       buttons: ['Restart Now', 'Later'],
       defaultId: 0,
       cancelId: 1,
-      title: 'G-LOKOO POS Update',
-      message: `G-LOKOO POS ${info.version} has been downloaded.`,
+      title: 'LORD PHONES AND ACCESSORIES POS Update',
+      message: `LORD PHONES AND ACCESSORIES POS ${info.version} has been downloaded.`,
       detail:
         'The update will be installed when the application restarts.'
     });
@@ -89,15 +89,15 @@ app.whenReady().then(() => {
   createWindow();
 
   tray = new Tray(
-    path.join(__dirname, '../public/g-lokoo-logo.png')
+    path.join(__dirname, '../public/lord-phones-logo.png')
   );
 
-  tray.setToolTip('G-LOKOO POS');
+  tray.setToolTip('LORD PHONES AND ACCESSORIES POS');
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
-        label: 'Open G-LOKOO POS',
+        label: 'Open LORD PHONES AND ACCESSORIES POS',
         click: () => win.show()
       },
       {

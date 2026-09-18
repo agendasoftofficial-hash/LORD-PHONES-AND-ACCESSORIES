@@ -1,8 +1,8 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+﻿import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.agendasoft.glokoo.pos',
-  appName: 'G-LOKOO POS',
+  appId: 'com.agendasoft.lordphonesandaccessories.pos',
+  appName: 'LORD PHONES POS',
   webDir: 'dist',
 
   server: {

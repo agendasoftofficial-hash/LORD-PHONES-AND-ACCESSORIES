@@ -1,5 +1,5 @@
 {
-  "name": "g-lokoo-pos",
+  "name": "lord-phones-pos",
   "private": true,
   "version": "2.25.0",
   "type": "module",
@@ -35,19 +35,19 @@
   },
   "main": "electron/main.cjs",
   "build": {
-    "appId": "com.agendasoft.glokoo.pos",
-    "productName": "G-LOKOO POS",
+    "appId": "com.agendasoft.lordphones.pos",
+    "productName": "LORD PHONES POS",
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "public/g-lokoo-logo.png",
+      "public/lord-phones-logo.png",
       "package.json"
     ],
     "win": {
       "target": [
         "nsis"
       ],
-      "icon": "public/g-lokoo-logo.png"
+      "icon": "public/lord-phones-logo.png"
     },
     "nsis": {
       "oneClick": false,
@@ -58,13 +58,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/agendasoftofficial-hash/G-LOKOO-POS.git"
+    "url": "https://github.com/agendasoftofficial-hash/LORD PHONES-POS.git"
   },
   "publish": [
     {
       "provider": "github",
       "owner": "agendasoftofficial-hash",
-      "repo": "G-LOKOO-POS",
+      "repo": "LORD PHONES-POS",
       "releaseType": "release"
     }
   ]

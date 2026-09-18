@@ -1,4 +1,4 @@
-const DB_NAME = 'glokoo-pos-offline';
+﻿const DB_NAME = 'lord-phones-pos-offline';
 const DB_VERSION = 1;
 
 function openDB(){
@@ -32,3 +32,4 @@ export async function removeQueued(id){
 export function registerOfflineServiceWorker(){
   if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 }
+
