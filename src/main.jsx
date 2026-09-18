@@ -867,31 +867,35 @@ function Dashboard({products,phones,role,onNavigate}){
       </div>
     </div>
 
-    <div className="stats">
-      <Stat label="Sales" value={money(stats.sales)} icon={ShoppingCart}/>
-      <Stat label="Gross Profit" value={money(stats.profit)} icon={BarChart3}/>
-      <Stat label="Sales Collected" value={money(stats.collected)} icon={Banknote}/>
-      <Stat label="Profit Margin" value={`${margin.toFixed(1)}%`} icon={BarChart3}/>
-    </div>
+    <div className="stats dashboard-primary-kpis">
+  <Stat
+    label="Today's Sales"
+    value={money(stats.sales)}
+    icon={ShoppingCart}
+  />
 
-    <div className="stats secondary-stats">
-      <Stat label="Outstanding Credit" value={money(stats.outstanding)} icon={CreditCard}/>
-      <Stat label="Phones In Stock" value={phonesInStock} icon={Smartphone}/>
-      <Stat label="Accessory Units" value={accessoryStock} icon={Package}/>
-      <Stat label="Inventory Cost Value" value={money(inventoryValue)} icon={Package}/>
-    </div>
+  <Stat
+    label="Gross Profit"
+    value={money(stats.profit)}
+    icon={BarChart3}
+  />
 
-    <div className="stats secondary-stats">
-      <Stat label="Repair Revenue" value={money(stats.repairRevenue)} icon={Wrench}/>
-      <Stat label="Repair Collected" value={money(stats.repairCollected)} icon={Banknote}/>
-      <Stat label="Returns & Refunds" value={money(stats.returns)} icon={Undo2}/>
-      <Stat label="Active Repairs" value={stats.activeRepairs} icon={Wrench}/>
-    </div>
+  <Stat
+    label="Collected"
+    value={money(stats.collected)}
+    icon={Banknote}
+  />
+
+  <Stat
+    label="Outstanding Credit"
+    value={money(stats.outstanding)}
+    icon={CreditCard}
+  />
+</div>
 
     <div className="stats secondary-stats dashboard-finance-row">
       <Stat label="Purchases in Period" value={money(stats.purchaseValue)} icon={ReceiptText}/>
       {isManagement&&<Stat label="Supplier Balance" value={money(stats.supplierBalance)} icon={WalletCards}/>}
-      <Stat label="Sales Count" value={stats.saleCount} icon={FileText}/>
       <Stat label="Return Count" value={stats.returnCount} icon={Undo2}/>
     </div>
 

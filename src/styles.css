@@ -326,3 +326,662 @@
 .barcode-search-row{display:flex;gap:8px;align-items:stretch;margin-bottom:0;position:relative;z-index:5}.barcode-search-row .searchbar{flex:1}.pos-scan-btn{height:44px;margin:0;white-space:nowrap;position:relative;z-index:6;pointer-events:auto;touch-action:manipulation;cursor:pointer}.barcode-search-row .barcode-scan-btn{margin-top:0}@media(max-width:600px){.barcode-search-row{flex-direction:column}.pos-scan-btn{width:100%;justify-content:center}}
 .connection-status{position:absolute;left:50%;transform:translateX(-50%);top:8px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--panel,#fff);border:1px solid var(--border,#ddd);z-index:2}.connection-status span{width:7px;height:7px;border-radius:50%;background:#888}.connection-status.online span{background:#20a464}.connection-status.offline span{background:#d84b4b}.connection-status b{font-weight:700}.table-actions{display:flex;gap:6px;flex-wrap:wrap}
 @media(max-width:800px){.connection-status{position:static;transform:none;margin-right:8px}.topbar{gap:8px}}
+
+/* =========================================================
+   LORD PHONES — MODERN POS DASHBOARD
+   Visual redesign only — no database/business logic changes
+   ========================================================= */
+
+.dashboard-v2 {
+  background: #f6f7f9;
+  max-width: 1600px;
+}
+
+/* Welcome header */
+.dashboard-v2 .welcome {
+  position: relative;
+  overflow: hidden;
+  min-height: 170px;
+  padding: 30px 34px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 90% 20%, rgba(216,170,53,.18), transparent 30%),
+    linear-gradient(135deg, #101010 0%, #1b1b1b 55%, #242424 100%);
+  border: 1px solid #292929;
+  box-shadow: 0 14px 35px rgba(0,0,0,.10);
+}
+
+.dashboard-v2 .welcome::after {
+  content: "";
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  right: -70px;
+  bottom: -120px;
+  border-radius: 50%;
+  border: 1px solid rgba(216,170,53,.18);
+}
+
+.dashboard-v2 .welcome .eyebrow {
+  color: #e1b84e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+}
+
+.dashboard-v2 .welcome h2 {
+  font-size: 29px;
+  line-height: 1.15;
+  margin: 9px 0 8px;
+  letter-spacing: -.5px;
+}
+
+.dashboard-v2 .welcome p {
+  color: #bcbcbc;
+  font-size: 13px;
+}
+
+.dashboard-v2 .refresh-btn {
+  position: relative;
+  z-index: 2;
+  border: 0;
+  background: #d8aa35;
+  color: #111;
+  border-radius: 10px;
+  padding: 12px 17px;
+  font-weight: 800;
+  box-shadow: 0 7px 18px rgba(216,170,53,.18);
+}
+
+.dashboard-v2 .refresh-btn:hover {
+  transform: translateY(-1px);
+  background: #e5b941;
+}
+
+/* Date/filter bar */
+.dashboard-v2 .dashboard-filter-bar {
+  margin-top: 16px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.035);
+}
+
+.dashboard-v2 .quick-filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.dashboard-v2 .quick-filters button {
+  border: 1px solid #e1e3e6;
+  background: #fff;
+  color: #4b5563;
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 750;
+  transition: .15s ease;
+}
+
+.dashboard-v2 .quick-filters button:hover {
+  border-color: #d3a12f;
+  color: #8d6812;
+}
+
+.dashboard-v2 .quick-filters button.active {
+  background: #151515;
+  color: #fff;
+  border-color: #151515;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+
+.dashboard-v2 .custom-dates {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+}
+
+.dashboard-v2 .custom-dates label {
+  color: #888;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.dashboard-v2 .custom-dates input {
+  display: block;
+  margin-top: 4px;
+  width: 125px;
+  padding: 8px 9px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 10px;
+}
+
+.dashboard-v2 .custom-dates > span {
+  color: #aaa;
+  font-size: 10px;
+  padding-bottom: 9px;
+}
+
+.dashboard-v2 .custom-dates strong {
+  font-size: 10px;
+  color: #555;
+  padding-bottom: 9px;
+  white-space: nowrap;
+}
+
+/* Performance section */
+.dashboard-v2 .dashboard-performance {
+  margin-top: 16px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.035);
+}
+
+.dashboard-v2 .performance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.dashboard-v2 .performance-card {
+  background: #fafafa;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: .15s ease;
+}
+
+.dashboard-v2 .performance-card:hover {
+  border-color: #d7b052;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px rgba(0,0,0,.05);
+}
+
+.dashboard-v2 .performance-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 11px;
+  background: #fff5dc;
+  color: #a8750e;
+  display: grid;
+  place-items: center;
+}
+
+.dashboard-v2 .performance-main span {
+  display: block;
+  color: #777;
+  font-size: 10px;
+}
+
+.dashboard-v2 .performance-main strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 17px;
+}
+
+.dashboard-v2 .performance-main small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 9px;
+}
+
+/* Main KPI cards */
+.dashboard-v2 > .stats {
+  margin-top: 16px;
+  gap: 13px;
+}
+
+.dashboard-v2 > .stats .stat {
+  position: relative;
+  overflow: hidden;
+  min-height: 92px;
+  border-radius: 15px;
+  padding: 17px;
+  border: 1px solid #e6e7e9;
+  box-shadow: 0 4px 15px rgba(0,0,0,.035);
+  transition: .15s ease;
+}
+
+.dashboard-v2 > .stats .stat:hover {
+  transform: translateY(-2px);
+  border-color: #d6b45e;
+  box-shadow: 0 9px 22px rgba(0,0,0,.07);
+}
+
+.dashboard-v2 > .stats .stat-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #fff4d9;
+  color: #a8730c;
+}
+
+.dashboard-v2 > .stats .stat strong {
+  font-size: 21px;
+  letter-spacing: -.3px;
+}
+
+.dashboard-v2 > .stats .stat span {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Secondary KPI rows */
+.dashboard-v2 .secondary-stats .stat {
+  min-height: 78px;
+  padding: 14px;
+}
+
+.dashboard-v2 .secondary-stats .stat-icon {
+  width: 38px;
+  height: 38px;
+}
+
+/* Quick actions */
+.dashboard-v2 .dashboard-quick-actions {
+  margin-top: 18px;
+  padding: 18px 20px;
+  border-radius: 15px;
+  background: #151515;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: 0 9px 25px rgba(0,0,0,.10);
+}
+
+.dashboard-v2 .dashboard-quick-actions .eyebrow {
+  color: #d8aa35;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.dashboard-v2 .dashboard-quick-actions h3 {
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+
+.dashboard-v2 .quick-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dashboard-v2 .quick-action-buttons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 13px;
+  border-radius: 9px;
+  border: 1px solid #3b3b3b;
+  background: #242424;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 750;
+  transition: .15s ease;
+}
+
+.dashboard-v2 .quick-action-buttons button:hover {
+  background: #d8aa35;
+  color: #111;
+  border-color: #d8aa35;
+}
+
+/* Dashboard panels */
+.dashboard-v2 .dashboard-grid-main {
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dashboard-v2 .dashboard-panel {
+  padding: 19px;
+  border-radius: 15px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 15px rgba(0,0,0,.035);
+}
+
+.dashboard-v2 .dashboard-panel .panel-title {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 2px;
+}
+
+.dashboard-v2 .dashboard-panel .panel-title h3 {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.dashboard-v2 .dashboard-panel .panel-title span {
+  font-size: 9px;
+}
+
+/* Recent rows */
+.dashboard-v2 .metric-row {
+  padding: 13px 2px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: .15s ease;
+}
+
+.dashboard-v2 .metric-row:last-child {
+  border-bottom: 0;
+}
+
+.dashboard-v2 .metric-row:hover {
+  background: #fffaf0;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
+}
+
+.dashboard-v2 .metric-row b {
+  font-size: 11px;
+}
+
+.dashboard-v2 .metric-row small {
+  color: #999;
+  font-size: 9px;
+  margin-top: 3px;
+}
+
+.dashboard-v2 .metric-row strong {
+  font-size: 11px;
+  color: #111;
+}
+
+/* Low stock */
+.dashboard-v2 .stock-row {
+  padding: 13px 2px;
+}
+
+.dashboard-v2 .stock-row strong {
+  background: #fff0ed;
+  color: #bd4b35;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 9px;
+}
+
+/* Charts */
+.dashboard-v2 .trend-chart {
+  height: 270px;
+  padding-top: 18px;
+}
+
+.dashboard-v2 .trend-track {
+  background: #f4f4f4;
+  border-radius: 8px 8px 3px 3px;
+}
+
+.dashboard-v2 .sales-bar {
+  background: linear-gradient(180deg,#d8aa35,#9a6e0d);
+}
+
+.dashboard-v2 .profit-bar {
+  background: linear-gradient(180deg,#222,#555);
+}
+
+.dashboard-v2 .chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 5px;
+  color: #777;
+  font-size: 9px;
+}
+
+.dashboard-v2 .chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dashboard-v2 .legend-sales,
+.dashboard-v2 .legend-profit {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.dashboard-v2 .legend-sales {
+  background: #c49422;
+}
+
+.dashboard-v2 .legend-profit {
+  background: #333;
+}
+
+/* Financial snapshot */
+.dashboard-v2 .ops-health {
+  gap: 10px;
+}
+
+.dashboard-v2 .ops-health > div {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 13px;
+}
+
+.dashboard-v2 .ops-health b {
+  font-size: 15px;
+}
+
+.dashboard-v2 .ops-health span {
+  margin-top: 3px;
+  font-size: 9px;
+  color: #888;
+}
+
+/* Empty states */
+.dashboard-v2 .empty {
+  min-height: 100px;
+  padding: 35px 10px;
+  font-size: 11px;
+}
+
+/* Dashboard responsive */
+@media(max-width:1100px) {
+  .dashboard-v2 .performance-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-v2 .dashboard-filter-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-v2 .custom-dates {
+    width: 100%;
+  }
+
+  .dashboard-v2 .custom-dates input {
+    width: 150px;
+  }
+}
+
+@media(max-width:850px) {
+  .dashboard-v2 .dashboard-grid-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-v2 .dashboard-quick-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-v2 .quick-action-buttons {
+    justify-content: flex-start;
+  }
+}
+
+@media(max-width:600px) {
+  .dashboard-v2 .welcome {
+    min-height: auto;
+    padding: 22px;
+  }
+
+  .dashboard-v2 .welcome h2 {
+    font-size: 22px;
+  }
+
+  .dashboard-v2 .performance-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dashboard-v2 .custom-dates {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-v2 .custom-dates strong {
+    width: 100%;
+  }
+
+  .dashboard-v2 > .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dashboard-v2 .dashboard-quick-actions {
+    padding: 16px;
+  }
+
+  .dashboard-v2 .quick-action-buttons {
+    width: 100%;
+  }
+
+  .dashboard-v2 .quick-action-buttons button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media(max-width:420px) {
+  .dashboard-v2 .performance-grid,
+  .dashboard-v2 > .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-v2 .custom-dates label {
+    flex: 1;
+  }
+
+  .dashboard-v2 .custom-dates input {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   LORD PHONES — COMPACT DASHBOARD KPI LAYOUT
+   ========================================================= */
+
+.dashboard-v2 > .stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.dashboard-v2 > .stats.secondary-stats {
+  margin-top: 10px;
+}
+
+.dashboard-v2 > .stats .stat {
+  min-width: 0;
+  min-height: 76px;
+  padding: 13px 14px;
+  border-radius: 13px;
+}
+
+.dashboard-v2 > .stats .stat-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+}
+
+.dashboard-v2 > .stats .stat strong {
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.dashboard-v2 > .stats .stat span {
+  font-size: 9px;
+}
+
+/* Keep the first KPI row visually prominent */
+.dashboard-v2 > .stats:first-of-type .stat {
+  min-height: 88px;
+}
+
+.dashboard-v2 > .stats:first-of-type .stat strong {
+  font-size: 21px;
+}
+
+/* Reduce vertical space between KPI groups */
+.dashboard-v2 > .stats + .stats {
+  margin-top: 9px;
+}
+
+/* Management KPI groups */
+.dashboard-v2 > .dashboard-finance-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Quick actions closer to KPI section */
+.dashboard-v2 .dashboard-quick-actions {
+  margin-top: 14px;
+}
+
+/* Main dashboard panels */
+.dashboard-v2 .dashboard-grid-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+/* Make the important chart slightly larger */
+.dashboard-v2 .dashboard-grid-main:has(.trend-chart) {
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .75fr);
+}
+
+/* Inventory analytics */
+.dashboard-v2 .inventory-analytics {
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+}
+
+/* Mobile */
+@media (max-width: 1000px) {
+  .dashboard-v2 > .stats,
+  .dashboard-v2 > .stats.dashboard-finance-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-v2 .dashboard-grid-main,
+  .dashboard-v2 .dashboard-grid-main:has(.trend-chart),
+  .dashboard-v2 .inventory-analytics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-v2 > .stats,
+  .dashboard-v2 > .stats.dashboard-finance-row {
+    grid-template-columns: 1fr;
+  }
+}
