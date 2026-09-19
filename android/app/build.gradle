@@ -8,11 +8,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.agendasoft.glokoo.pos"
+    namespace "com.agendasoft.lordphones.pos"
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.agendasoft.glokoo.pos"
+        applicationId "com.agendasoft.lordphones.pos"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2

@@ -1,71 +1,72 @@
 {
-  "name": "lord-phones-pos",
-  "private": true,
-  "version": "2.25.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "desktop": "electron .",
-    "desktop:build": "electron-builder --win nsis",
-    "android:add": "npx cap add android",
-    "android:sync": "npm run build && npx cap sync android",
-    "android:open": "npx cap open android",
-    "android:build": "npm run build && npx cap sync android && cd android && gradlew assembleDebug"
-  },
-  "dependencies": {
-    "@capacitor-mlkit/barcode-scanning": "^7.3.0",
-    "@capacitor/android": "^7.4.3",
-    "@capacitor/core": "^7.4.3",
-    "@capawesome/capacitor-live-update": "^7.5.0",
-    "@supabase/supabase-js": "^2.49.1",
-    "@vitejs/plugin-react": "^4.3.1",
-    "electron-updater": "^6.8.9",
-    "lucide-react": "^0.468.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^7.4.3",
-    "electron": "^37.2.6",
-    "electron-builder": "^26.0.12"
-  },
-  "main": "electron/main.cjs",
-  "build": {
-    "appId": "com.agendasoft.lordphones.pos",
-    "productName": "LORD PHONES POS",
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "public/lord-phones-logo.png",
-      "package.json"
-    ],
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "public/lord-phones-logo.png"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/agendasoftofficial-hash/LORD PHONES-POS.git"
-  },
-  "publish": [
-    {
-      "provider": "github",
-      "owner": "agendasoftofficial-hash",
-      "repo": "LORD PHONES-POS",
-      "releaseType": "release"
-    }
-  ]
+    "name":  "lord-phones-pos",
+    "private":  true,
+    "version":  "2.25.0",
+    "type":  "module",
+    "scripts":  {
+                    "dev":  "vite",
+                    "build":  "vite build",
+                    "preview":  "vite preview",
+                    "desktop":  "electron .",
+                    "desktop:build":  "electron-builder --win nsis",
+                    "android:add":  "npx cap add android",
+                    "android:sync":  "npm run build \u0026\u0026 npx cap sync android",
+                    "android:open":  "npx cap open android",
+                    "android:build":  "npm run build \u0026\u0026 npx cap sync android \u0026\u0026 cd android \u0026\u0026 gradlew assembleDebug"
+                },
+    "dependencies":  {
+                         "@capacitor-mlkit/barcode-scanning":  "^7.3.0",
+                         "@capacitor/android":  "^7.4.3",
+                         "@capacitor/core":  "^7.4.3",
+                         "@capawesome/capacitor-live-update":  "^7.5.0",
+                         "@supabase/supabase-js":  "^2.49.1",
+                         "@vitejs/plugin-react":  "^4.3.1",
+                         "electron-updater":  "^6.8.9",
+                         "lucide-react":  "^0.468.0",
+                         "react":  "^18.3.1",
+                         "react-dom":  "^18.3.1",
+                         "typescript":  "^5.6.3",
+                         "vite":  "^5.4.10"
+                     },
+    "devDependencies":  {
+                            "@capacitor/cli":  "^7.4.3",
+                            "electron":  "^37.2.6",
+                            "electron-builder":  "^26.0.12"
+                        },
+    "main":  "electron/main.cjs",
+    "build":  {
+                  "appId":  "com.agendasoft.lordphones.pos",
+                  "productName":  "LORD PHONES POS",
+                  "files":  [
+                                "dist/**/*",
+                                "electron/**/*",
+                                "public/lord-phones-logo.png",
+                                "package.json"
+                            ],
+                  "win":  {
+                              "target":  [
+                                             "nsis"
+                                         ],
+                              "icon":  "public/lord-phones-logo.png",
+                              "artifactName":  "LORD-PHONES-POS-Setup-${version}.${ext}"
+                          },
+                  "nsis":  {
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true,
+                               "createDesktopShortcut":  true,
+                               "createStartMenuShortcut":  true
+                           }
+              },
+    "repository":  {
+                       "type":  "git",
+                       "url":  "https://github.com/agendasoftofficial-hash/LORD-PHONES-AND-ACCESSORIES.git"
+                   },
+    "publish":  [
+                    {
+                        "provider":  "github",
+                        "owner":  "agendasoftofficial-hash",
+                        "repo":  "LORD-PHONES-AND-ACCESSORIES",
+                        "releaseType":  "release"
+                    }
+                ]
 }

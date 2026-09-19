@@ -1,9 +1,10 @@
-﻿const { app, BrowserWindow, Menu, Tray, dialog } = require('electron');
+﻿const { app, BrowserWindow, Menu, Tray } = require('electron');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 
 let win;
 let tray;
+let updateCheckTimer;
 
 function createWindow() {
   win = new BrowserWindow({
@@ -19,7 +20,7 @@ function createWindow() {
 
   const url =
     process.env.LORD_PHONES_POS_URL ||
-    'https://glokoophonesandaccessories.vercel.app';
+    'https://lordphonesandaccessories.vercel.app';
 
   win.loadURL(url);
 
@@ -37,52 +38,71 @@ function setupAutoUpdater() {
     return;
   }
 
+  // Automatically download updates.
   autoUpdater.autoDownload = true;
+
+  // Automatically install the downloaded update when the app quits.
   autoUpdater.autoInstallOnAppQuit = true;
 
+  // Never ask the user whether to download an update.
+  autoUpdater.autoRunAppAfterInstall = true;
+
   autoUpdater.on('checking-for-update', () => {
-    console.log('Checking for LORD PHONES AND ACCESSORIES POS updates...');
+    console.log('LORD PHONES POS: checking for updates...');
   });
 
   autoUpdater.on('update-available', (info) => {
-    console.log(`Update available: ${info.version}`);
+    console.log(
+      `LORD PHONES POS: update available ${info.version}`
+    );
   });
 
-  autoUpdater.on('update-not-available', () => {
-    console.log('LORD PHONES AND ACCESSORIES POS is up to date.');
-  });
-
-  autoUpdater.on('error', (error) => {
-    console.error('Auto-update error:', error);
+  autoUpdater.on('update-not-available', (info) => {
+    console.log(
+      `LORD PHONES POS: already running latest version ${info.version}`
+    );
   });
 
   autoUpdater.on('download-progress', (progress) => {
     console.log(
-      `Downloading update: ${Math.round(progress.percent)}%`
+      `LORD PHONES POS: downloading update ${Math.round(progress.percent)}%`
     );
   });
 
   autoUpdater.on('update-downloaded', (info) => {
-    console.log(`Update downloaded: ${info.version}`);
+    console.log(
+      `LORD PHONES POS: update ${info.version} downloaded. Installing automatically...`
+    );
 
-    const choice = dialog.showMessageBoxSync(win, {
-      type: 'info',
-      buttons: ['Restart Now', 'Later'],
-      defaultId: 0,
-      cancelId: 1,
-      title: 'LORD PHONES AND ACCESSORIES POS Update',
-      message: `LORD PHONES AND ACCESSORIES POS ${info.version} has been downloaded.`,
-      detail:
-        'The update will be installed when the application restarts.'
-    });
-
-    if (choice === 0) {
-      app.isQuitting = true;
-      autoUpdater.quitAndInstall();
-    }
+    // Give electron-updater a moment to finish its internal work,
+    // then restart and install the new version automatically.
+    setTimeout(() => {
+      try {
+        app.isQuitting = true;
+        autoUpdater.quitAndInstall(false, true);
+      } catch (error) {
+        console.error(
+          'LORD PHONES POS: automatic update installation failed:',
+          error
+        );
+      }
+    }, 1500);
   });
 
+  autoUpdater.on('error', (error) => {
+    console.error(
+      'LORD PHONES POS: auto-update error:',
+      error
+    );
+  });
+
+  // Check immediately when the packaged app starts.
   autoUpdater.checkForUpdatesAndNotify();
+
+  // Check again every 30 minutes while the app is running.
+  updateCheckTimer = setInterval(() => {
+    autoUpdater.checkForUpdatesAndNotify();
+  }, 30 * 60 * 1000);
 }
 
 app.whenReady().then(() => {
@@ -92,13 +112,27 @@ app.whenReady().then(() => {
     path.join(__dirname, '../public/lord-phones-logo.png')
   );
 
-  tray.setToolTip('LORD PHONES AND ACCESSORIES POS');
+  tray.setToolTip('LORD PHONES POS');
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
-        label: 'Open LORD PHONES AND ACCESSORIES POS',
-        click: () => win.show()
+        label: 'Open LORD PHONES POS',
+        click: () => {
+          win.show();
+          win.focus();
+        }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Check for Updates',
+        click: () => {
+          if (app.isPackaged) {
+            autoUpdater.checkForUpdatesAndNotify();
+          }
+        }
       },
       {
         type: 'separator'
@@ -115,9 +149,19 @@ app.whenReady().then(() => {
 
   tray.on('double-click', () => {
     win.show();
+    win.focus();
   });
 
   setupAutoUpdater();
+});
+
+app.on('before-quit', () => {
+  app.isQuitting = true;
+
+  if (updateCheckTimer) {
+    clearInterval(updateCheckTimer);
+    updateCheckTimer = null;
+  }
 });
 
 app.on('window-all-closed', (e) => {

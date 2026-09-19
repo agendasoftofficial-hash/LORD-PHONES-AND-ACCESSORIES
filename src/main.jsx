@@ -8,7 +8,7 @@ import {
   ArrowUpDown, Pencil, ClipboardList, Boxes, ArrowRightLeft, AlertTriangle, SmartphoneNfc, MessageCircle
 } from "lucide-react";
 import { supabase } from "./supabase";
-import { getCache, putCache, queueOperation, getQueue, removeQueued, registerOfflineServiceWorker } from "./offline";
+import { getCache, putCache, queueOperation, queueSaleAndApplyInventory, getQueue, removeQueued, updateQueued, registerOfflineServiceWorker } from "./offline";
 import "./styles.css";
 
 import { LiveUpdate } from "@capawesome/capacitor-live-update";
@@ -81,7 +81,7 @@ async function checkForLiveUpdate() {
   }
 }
 
-checkForLiveUpdate();
+// checkForLiveUpdate(); // Disabled for LORD PHONES POS
 
 const money = n => `\u20B5${Number(n||0).toLocaleString("en-GH",{minimumFractionDigits:2})}`;
 
@@ -314,20 +314,84 @@ function App(){
   }
 
   async function loadProfile(){
-    const {data,error}=await supabase.from("profiles").select("*").eq("id",session.user.id).maybeSingle();
-    if(error){console.error("Could not load profile:",error);return}
+    const cacheKey=`profile:${session.user.id}`;
+
+    if(!navigator.onLine){
+      const cached=await getCache(cacheKey,null);
+
+      if(cached){
+        setProfile(cached);
+      }else{
+        console.warn("No cached LORD PHONES profile available offline.");
+        setProfile(null);
+      }
+
+      return;
+    }
+
+    const {data,error}=await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id",session.user.id)
+      .maybeSingle();
+
+    if(error){
+      console.error("Could not load profile:",error);
+
+      const cached=await getCache(cacheKey,null);
+
+      if(cached) setProfile(cached);
+
+      return;
+    }
+
     if(data && data.active===false){
       alert("This LORD PHONES POS account is inactive. Please contact an Owner or Admin.");
       await supabase.auth.signOut();
       setProfile(null);
       return;
     }
+
+    if(data){
+      await putCache(cacheKey,data);
+    }
+
     setProfile(data);
   }
 
   async function loadShopSettings(){
-    const {data,error}=await supabase.from("shop_settings").select("*").eq("id",1).maybeSingle();
-    if(!error && data) setShopSettings(data);
+    const cacheKey="shop_settings";
+
+    if(!navigator.onLine){
+      const cached=await getCache(cacheKey,null);
+
+      if(cached){
+        setShopSettings(cached);
+      }
+
+      return;
+    }
+
+    const {data,error}=await supabase
+      .from("shop_settings")
+      .select("*")
+      .eq("id",1)
+      .maybeSingle();
+
+    if(error){
+      console.error("Could not load shop settings:",error);
+
+      const cached=await getCache(cacheKey,null);
+
+      if(cached) setShopSettings(cached);
+
+      return;
+    }
+
+    if(data){
+      await putCache(cacheKey,data);
+      setShopSettings(data);
+    }
   }
 
   async function loadProducts(){
@@ -488,8 +552,14 @@ async function loadPhones(){
         p_due_date:dueDate||null,p_items:items
       };
       if(!navigator.onLine){
-        const queued=await queueOperation({type:"sale",payload:salePayload});
+        const queued=await queueSaleAndApplyInventory(salePayload);
         if(!queued) throw new Error("Could not save the offline sale locally.");
+        const cachedProducts=await getCache("products",products);
+        setProducts(cachedProducts);
+
+        const cachedPhones=await getCache("phones",phones);
+        setPhones(cachedPhones);
+
         setPendingSync(n=>n+1);
         setLastSale({receiptNo:receipt,date:new Date(),items:cart.map(i=>({...i})),total,payment,paymentType,amountPaid:paid,balanceDue:balance,dueDate:dueDate||null,paymentReference:paymentReference.trim(),customer:selectedCustomer||null,offline:true});
         setCart([]);setPaymentReference("");setAmountPaid("");setDueDate("");setPaymentType("Full Payment");setSelectedCustomer(null);
@@ -621,7 +691,7 @@ ${e.message||e}`);
       {page==="Products & Inventory"&&<Products products={products} reload={loadProducts} canManage={canInventory}/>}
       {page==="Inventory Control"&&<InventoryControl products={products} phones={phones} settings={shopSettings} onNavigate={navigate}/>}
       {page==="Phones & IMEI"&&<Imei phones={phones} reload={loadPhones} canManage={canInventory}/>}
-      {page==="Purchases"&&<Purchases products={products} reload={()=>{loadProducts();loadPhones();}}/>}
+      {page==="Purchases"&&<Purchases products={products} phones={phones} reload={()=>{loadProducts();loadPhones();}}/>}
       {page==="Suppliers"&&<Suppliers role={role}/>}
       {page==="Customers"&&<Customers customers={customers} reload={loadCustomers} role={role}/>}
       {page==="Repairs"&&<Repairs customers={customers}/>}
@@ -678,6 +748,22 @@ function Dashboard({products,phones,role,onNavigate}){
   async function loadDashboard(){
     setBusy(true); setError("");
     try{
+      const dashboardCacheKey=`dashboard:${from}:${to}:${isManagement?"management":"staff"}`;
+
+      if(!navigator.onLine){
+        const cached=await getCache(dashboardCacheKey,null);
+
+        if(cached){
+          setStats(cached);
+          setError("");
+        }else{
+          setError("No cached dashboard data is available offline yet.");
+        }
+
+        setBusy(false);
+        return;
+      }
+
       const fromDate=new Date(`${from}T00:00:00`);
       const toDate=new Date(`${to}T00:00:00`);
       const end=new Date(toDate); end.setDate(end.getDate()+1);
@@ -777,7 +863,7 @@ function Dashboard({products,phones,role,onNavigate}){
           cashiers=Object.entries(map).sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value}));
         }
       }
-      setStats({
+      const dashboardStats={
         sales:totalSales,
         profit:adjustedProfit,
         collected:totalCollected,
@@ -803,7 +889,10 @@ function Dashboard({products,phones,role,onNavigate}){
         attentionRepairs,
         recentPurchases,
         comparison
-      });
+      };
+
+      setStats(dashboardStats);
+      await putCache(dashboardCacheKey,dashboardStats);
     }catch(e){
       console.error("Dashboard load failed",e);
       setError(e.message||"Could not load dashboard data.");
@@ -1526,7 +1615,7 @@ function Imei({phones,reload,canManage=true}){
   </section>
 }
 
-function Purchases({products,reload}){
+function Purchases({products,phones,reload}){
   const [open,setOpen]=useState(false);
   const [supplier,setSupplier]=useState("");
   const [supplierId,setSupplierId]=useState("");
@@ -1539,6 +1628,7 @@ function Purchases({products,reload}){
   const [busy,setBusy]=useState(false);
   const [accessory,setAccessory]=useState({product_id:"",quantity:"1",unit_cost:""});
   const [phone,setPhone]=useState({brand:"",model:"",storage:"",ram:"",color:"",condition:"New",imei_1:"",imei_2:"",cost:"",selling_price:"",warranty:""});
+  const [imeiScannerOpen,setImeiScannerOpen]=useState(false);
   const [items,setItems]=useState([]);
   const [history,setHistory]=useState([]);
   const [loadingHistory,setLoadingHistory]=useState(true);
@@ -1602,6 +1692,46 @@ function Purchases({products,reload}){
     setItems(x=>[...x,{type:"accessory",product_id:p.id,product_name:p.name,quantity:Math.floor(qty),unit_cost:cost}]);
     setAccessory({product_id:"",quantity:"1",unit_cost:""});
   }
+  function handlePhoneImeiScan(value){
+    const scannedImei=String(value||"").replace(/\D/g,"");
+
+    if(!scannedImei){
+      alert("No valid IMEI was detected.");
+      return;
+    }
+
+    const match=(phones||[]).find(p=>{
+      const imei1=String(p.imei_1||"").replace(/\D/g,"");
+      const imei2=String(p.imei_2||"").replace(/\D/g,"");
+      return imei1===scannedImei||imei2===scannedImei;
+    });
+
+    if(!match){
+      setPhone(prev=>({...prev,imei_1:scannedImei}));
+      setImeiScannerOpen(false);
+      alert("IMEI scanned, but this phone is not in the existing LORD PHONES inventory. Please enter the phone details manually.");
+      return;
+    }
+
+    setPhone(prev=>({
+      ...prev,
+      brand:match.brand||"",
+      model:match.model||"",
+      storage:match.storage||"",
+      ram:match.ram||"",
+      color:match.color||"",
+      condition:match.condition||"New",
+      imei_1:match.imei_1||scannedImei,
+      imei_2:match.imei_2||"",
+      cost:match.cost??prev.cost,
+      selling_price:match.selling_price??prev.selling_price,
+      warranty:match.warranty||""
+    }));
+
+    setImeiScannerOpen(false);
+    alert(`Phone found: ${match.brand||""} ${match.model||""}`);
+  }
+
   function addPhone(){
     const required=[phone.brand,phone.model,phone.imei_1,phone.cost,phone.selling_price];
     if(required.some(x=>!String(x).trim())){alert("Brand, model, IMEI 1, cost and selling price are required.");return;}
@@ -1741,8 +1871,9 @@ function Purchases({products,reload}){
       <div className="form-grid two"><label>Supplier*<select value={supplierId} onChange={e=>{setSupplierId(e.target.value);const chosen=suppliers.find(x=>String(x.id)===String(e.target.value));setSupplier(chosen?.name||"")}}><option value="">Select supplier...</option>{suppliers.filter(x=>x.active!==false).map(x=><option key={x.id} value={x.id}>{x.name}{x.phone?` — ${x.phone}`:""}</option>)}</select></label><label>Invoice No.<input value={invoice} onChange={e=>setInvoice(e.target.value)} placeholder="Optional"/></label><label>Purchase date<input type="date" value={date} onChange={e=>setDate(e.target.value)}/></label></div>
       <div className="purchase-tabs"><button className={tab==="accessory"?"selected":""} onClick={()=>setTab("accessory")}><Package size={15}/> Accessory</button><button className={tab==="phone"?"selected":""} onClick={()=>setTab("phone")}><Smartphone size={15}/> Phone / IMEI</button></div>
       {tab==="accessory"?<div className="purchase-entry"><label>Existing product<select value={accessory.product_id} onChange={e=>{const p=products.find(x=>String(x.id)===String(e.target.value));setAccessory(a=>({...a,product_id:e.target.value,unit_cost:p?.cost??a.unit_cost}))}}><option value="">Select accessory...</option>{products.filter(p=>p.category!=="Phones").map(p=><option key={p.id} value={p.id}>{p.name} — stock {p.stock}</option>)}</select></label><div className="form-grid two"><label>Quantity<input type="number" min="1" value={accessory.quantity} onChange={e=>setAccessory({...accessory,quantity:e.target.value})}/></label><label>Unit cost (GHS)<input type="number" min="0" step="0.01" value={accessory.unit_cost} onChange={e=>setAccessory({...accessory,unit_cost:e.target.value})}/></label></div><button className="secondary full" onClick={addAccessory}><Plus size={15}/> Add Accessory Line</button></div>
-      :<div className="purchase-entry"><div className="form-grid two"><label>Brand*<input value={phone.brand} onChange={e=>setPhone({...phone,brand:e.target.value})}/></label><label>Model*<input value={phone.model} onChange={e=>setPhone({...phone,model:e.target.value})}/></label><label>Storage<input value={phone.storage} onChange={e=>setPhone({...phone,storage:e.target.value})} placeholder="128GB"/></label><label>RAM<input value={phone.ram} onChange={e=>setPhone({...phone,ram:e.target.value})} placeholder="8GB"/></label><label>Colour<input value={phone.color} onChange={e=>setPhone({...phone,color:e.target.value})}/></label><label>Condition<select value={phone.condition} onChange={e=>setPhone({...phone,condition:e.target.value})}><option>New</option><option>Used</option><option>Refurbished</option></select></label><label>IMEI 1*<input value={phone.imei_1} onChange={e=>setPhone({...phone,imei_1:e.target.value})}/></label><label>IMEI 2<input value={phone.imei_2} onChange={e=>setPhone({...phone,imei_2:e.target.value})}/></label><label>Cost price (GHS)*<input type="number" min="0" step="0.01" value={phone.cost} onChange={e=>setPhone({...phone,cost:e.target.value})}/></label><label>Selling price (GHS)*<input type="number" min="0" step="0.01" value={phone.selling_price} onChange={e=>setPhone({...phone,selling_price:e.target.value})}/></label><label>Warranty<input value={phone.warranty} onChange={e=>setPhone({...phone,warranty:e.target.value})} placeholder="e.g. 12 months"/></label></div><button className="secondary full" onClick={addPhone}><Plus size={15}/> Add Phone Unit</button></div>}
+      :<div className="purchase-entry"><div className="form-grid two"><label>Brand*<input value={phone.brand} onChange={e=>setPhone({...phone,brand:e.target.value})}/></label><label>Model*<input value={phone.model} onChange={e=>setPhone({...phone,model:e.target.value})}/></label><label>Storage<input value={phone.storage} onChange={e=>setPhone({...phone,storage:e.target.value})} placeholder="128GB"/></label><label>RAM<input value={phone.ram} onChange={e=>setPhone({...phone,ram:e.target.value})} placeholder="8GB"/></label><label>Colour<input value={phone.color} onChange={e=>setPhone({...phone,color:e.target.value})}/></label><label>Condition<select value={phone.condition} onChange={e=>setPhone({...phone,condition:e.target.value})}><option>New</option><option>Used</option><option>Refurbished</option></select></label><label>IMEI 1*<div className="barcode-input-row"><input value={phone.imei_1} onChange={e=>setPhone({...phone,imei_1:e.target.value.replace(/\D/g,"")})} placeholder="Scan or enter IMEI 1..." inputMode="numeric"/><button type="button" className="secondary" onClick={()=>setImeiScannerOpen(true)}><ScanLine size={15}/> Scan</button></div></label><label>IMEI 2<input value={phone.imei_2} onChange={e=>setPhone({...phone,imei_2:e.target.value.replace(/\D/g,"")})} placeholder="Enter IMEI 2..." inputMode="numeric"/></label><label>Cost price (GHS)*<input type="number" min="0" step="0.01" value={phone.cost} onChange={e=>setPhone({...phone,cost:e.target.value})}/></label><label>Selling price (GHS)*<input type="number" min="0" step="0.01" value={phone.selling_price} onChange={e=>setPhone({...phone,selling_price:e.target.value})}/></label><label>Warranty<input value={phone.warranty} onChange={e=>setPhone({...phone,warranty:e.target.value})} placeholder="e.g. 12 months"/></label></div><button className="secondary full" onClick={addPhone}><Plus size={15}/> Add Phone Unit</button></div>}
 
+      {imeiScannerOpen&&<BarcodeScanner title="Scan Phone IMEI" onClose={()=>setImeiScannerOpen(false)} onDetected={handlePhoneImeiScan}/>}
       <div className="draft-list"><div className="draft-head"><b>Purchase Items</b><span>{items.length} line{items.length===1?"":"s"}</span></div>{items.length?<>{items.map((i,n)=><div className="draft-line" key={n}><div><b>{i.product_name}</b><small>{i.type==="phone"?`IMEI: ${i.imei_1}`:`Qty ${i.quantity} × ${money(i.unit_cost)}`}</small></div><strong>{money(i.type==="phone"?i.cost:Number(i.unit_cost)*Number(i.quantity))}</strong><button onClick={()=>setItems(x=>x.filter((_,idx)=>idx!==n))}><X size={14}/></button></div>)}</>:<div className="empty-mini">No items added yet.</div>}</div>
       <div className="purchase-payment-box"><div className="purchase-total"><span>Total Purchase Cost</span><strong>{money(total)}</strong></div><div className="form-grid two"><label>Paid to supplier now (GHS)<input type="number" min="0" step="0.01" max={total} value={initialPayment} onChange={e=>setInitialPayment(e.target.value)} placeholder="0.00"/></label><label>Payment method<select value={paymentMethod} onChange={e=>setPaymentMethod(e.target.value)}>{["Cash","MTN MoMo","Telecel Cash","AirtelTigo Money","Bank Transfer","Card"].map(x=><option key={x}>{x}</option>)}</select></label><label>Payment reference<input value={paymentRef} onChange={e=>setPaymentRef(e.target.value)} placeholder="Required for electronic payments"/></label></div><div className="purchase-balance-preview"><span>Supplier balance after purchase</span><strong>{money(Math.max(0,total-Number(initialPayment||0)))}</strong></div></div>
       <button className="primary full" disabled={busy||!items.length||!supplierId} onClick={receive}>{busy?<><LoaderCircle size={16} className="spin"/> Receiving...</>:<>Receive Stock · {money(total)}</>}</button>
@@ -2562,5 +2693,19 @@ function EmptyPage({title}){return <section className="content"><div className="
 function Modal({title,close,children}){return <div className="modal-bg"><div className="modal"><div className="modal-head"><h3>{title}</h3><button onClick={close}><X/></button></div>{children}</div></div>}
 
 createRoot(document.getElementById("root")).render(<App/>);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

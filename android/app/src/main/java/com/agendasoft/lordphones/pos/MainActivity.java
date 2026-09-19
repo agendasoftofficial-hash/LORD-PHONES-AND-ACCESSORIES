@@ -1,4 +1,4 @@
-package com.agendasoft.glokoo.pos;
+package com.agendasoft.lordphones.pos;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,7 +1,7 @@
 ﻿import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.agendasoft.lordphonesandaccessories.pos',
+  appId: 'com.agendasoft.lordphones.pos',
   appName: 'LORD PHONES POS',
   webDir: 'dist',
 
