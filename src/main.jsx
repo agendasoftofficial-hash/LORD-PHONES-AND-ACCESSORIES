@@ -11,6 +11,7 @@ import { supabase } from "./supabase";
 import { getCache, putCache, queueOperation, queueSaleAndApplyInventory, getQueue, removeQueued, updateQueued, registerOfflineServiceWorker } from "./offline";
 import "./styles.css";
 
+import { Capacitor } from "@capacitor/core";
 import { LiveUpdate } from "@capawesome/capacitor-live-update";
 
 const API_BASE_URL = "https://lordphonesandaccessories.vercel.app";
@@ -21,7 +22,7 @@ const LIVE_UPDATE_MANIFEST_URL =
 const CURRENT_BUNDLE_ID = "2.25.0";
 
 async function checkForLiveUpdate() {
-  if (!window.Capacitor?.isNativePlatform?.()) return;
+  if (!Capacitor.isNativePlatform()) return;
 
   try {
     // Tell Live Update the current app bundle is healthy.
