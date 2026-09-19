@@ -81,7 +81,7 @@ async function checkForLiveUpdate() {
   }
 }
 
-// checkForLiveUpdate(); // Disabled for LORD PHONES POS
+checkForLiveUpdate();
 
 const money = n => `\u20B5${Number(n||0).toLocaleString("en-GH",{minimumFractionDigits:2})}`;
 
